@@ -29,12 +29,20 @@ enforce-gtid-consistency = 1
     #create password
     if [ "x$MYSQL_SLAVE" = "x1" ] && [ "x$MYSQL_MASTER_IP" != 'x' ];then
             #create slave
+						if [ -n "$MYSQL_MASTER_PORT "];then
+							mysql_master_port = $MYSQL_MASTER_PORT
+						else
+							mysql_master_port = 3306
+						fi
+						#set the instance is read-only
+						echo "read_only  = 1 " >>/etc/my.cnf
             echo "create mysql slave"
-            mysql -e "change master to master_user='repl',master_password='repl123',master_host='$MYSQL_MASTER_IP',master_port=3306,master_auto_position=1"
+						mysql -e "set @@global.read_only = 1"
+            mysql -e "change master to master_user='repl',master_password='repl123',master_host='$MYSQL_MASTER_IP',master_port=$mysql_master_port,master_auto_position=1"
             mysql -e "start slave"
     else
 			#create default replication account
-			mysql -e "grant replication on *.* to 'repl'@'%' identified by 'repl123'";
+			mysql -e "grant replication on *.* to 'repl'@'%' identified by 'repl123';"
       mysql -e "delete from mysql.user where User = ''"
       mysql -e "update mysql.user set Password = password('$passwd');flush privileges;"
     fi

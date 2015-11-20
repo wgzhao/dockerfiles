@@ -1,8 +1,8 @@
 FROM centos:6.6
 MAINTAINER  3x-data information techonology Co, Ltd. - wgzhao
 RUN yum install -y epel-release
-RUN sed -i 's/^mirrorlist/#mirrorlist/g;s/#baseurl/baseurl/g;s/download.fedoraproject.org\/pub/mirrors.aliyun.com/g' /etc/yum.repos.d/epel.repo
-RUN yum install -y hostname net-tools unzip wget openssh-server
+RUN sed -i 's/^mirrorlist/#mirrorlist/g;s/#baseurl/baseurl/g;s/download.fedoraproject.org\/pub/mirrors.aliyun.com/g;s/mirror.centos.org/mirrors.aliyun.com/g' /etc/yum.repos.d/epel.repo
+RUN yum clean all && yum install -y hostname net-tools unzip wget openssh-server
 RUN echo 'root:3xdata123' |chpasswd
 #setting sshd
 RUN sed -i 's/PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
